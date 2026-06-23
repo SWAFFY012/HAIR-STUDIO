@@ -274,8 +274,10 @@
 <main>
 <!-- ============ HERO ============ -->
 <section id="hero" class="relative min-h-screen flex items-end overflow-hidden">
-  <div class="parallax absolute inset-0 z-0">
-    <img id="heroImg" src="assets/hero.png" alt="Модель с роскошными волосами в студии élevé" class="w-full h-[115%] object-cover object-center" />
+  <div class="absolute inset-0 z-0">
+    <video id="heroVideo" class="w-full h-full object-cover object-center" muted playsinline preload="auto" poster="assets/hero.png">
+      <source src="assets/hero.mp4" type="video/mp4" />
+    </video>
     <div class="absolute inset-0" style="background:linear-gradient(to top,rgba(42,37,30,.72) 0%,rgba(42,37,30,.15) 45%,rgba(42,37,30,.35) 100%);"></div>
     <div class="absolute inset-0" style="background:linear-gradient(to right,rgba(42,37,30,.45),transparent 55%);"></div>
   </div>
@@ -697,7 +699,14 @@ document.getElementById('reviewTrack2').innerHTML = REVIEWS.map(reviewCard).join
 /* =========================================================
    PRELOADER
    ========================================================= */
-window.addEventListener('load', ()=> setTimeout(()=> document.getElementById('preloader').classList.add('done'), 1700));
+window.addEventListener('load', ()=> setTimeout(()=>{
+  document.getElementById('preloader').classList.add('done');
+  // hero background video: play once from the start when the hero is revealed (no loop)
+  const hv = document.getElementById('heroVideo');
+  if(hv && !matchMedia('(prefers-reduced-motion:reduce)').matches){
+    try { hv.currentTime = 0; hv.play().catch(()=>{}); } catch(e){}
+  }
+}, 1700));
 
 /* =========================================================
    REVEAL on scroll (BlurFade)

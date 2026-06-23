@@ -1,6 +1,7 @@
 # Reference & local-only files (not part of the deployed site)
 ChatGPT*.png
 main.png
+/Hair background.mp4
 preview-*.jpeg
 *.bat
 .playwright-mcp/
