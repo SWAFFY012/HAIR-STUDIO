@@ -1,0 +1,847 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>élevé — Премиальная студия волос</title>
+<meta name="description" content="élevé — премиальная студия ухода за волосами. Окрашивание, балаяж, кератин, уход и стрижки от ведущих мастеров. Онлайн-запись." />
+
+<!-- Fonts -->
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+
+<!-- Tailwind -->
+<script src="https://cdn.tailwindcss.com"></script>
+<script>
+  tailwind.config = {
+    theme: {
+      extend: {
+        fontFamily: {
+          serif: ['"Cormorant Garamond"', 'serif'],
+          sans: ['Inter', 'sans-serif'],
+        },
+        colors: {
+          cream:    '#F7F1E8',
+          paper:    '#FBF7F0',
+          sand:     '#EDE3D3',
+          beige:    '#E0D2BD',
+          taupe:    '#C3B097',
+          mocha:    '#9C876C',
+          coffee:   '#6E5D49',
+          espresso: '#3A332A',
+          ink:      '#2A251E',
+          gold:     '#B7995F',
+          gold2:    '#CDB07A',
+        },
+      },
+    },
+  };
+</script>
+
+<style>
+  :root{
+    --cream:#F7F1E8; --paper:#FBF7F0; --sand:#EDE3D3; --beige:#E0D2BD;
+    --taupe:#C3B097; --mocha:#9C876C; --coffee:#6E5D49; --espresso:#3A332A;
+    --ink:#2A251E; --gold:#B7995F; --gold2:#CDB07A; --muted:#7A6E5C;
+    --line:rgba(58,51,42,.14);
+  }
+
+  *{ -webkit-font-smoothing:antialiased; text-rendering:optimizeLegibility; }
+  html{ scroll-behavior:smooth; }
+  body{
+    background:var(--cream); color:var(--ink); font-family:Inter,sans-serif;
+    overflow-x:hidden; cursor:none;
+  }
+  @media (pointer:coarse){ body{ cursor:auto; } }
+  ::selection{ background:var(--gold); color:#fff; }
+
+  /* ---------- Typography helpers ---------- */
+  .font-display{ font-family:"Cormorant Garamond",serif; }
+  .eyebrow{
+    font-size:.72rem; letter-spacing:.34em; text-transform:uppercase;
+    font-weight:500; color:var(--coffee); display:inline-flex; align-items:center; gap:.85rem;
+  }
+  .eyebrow::before{ content:""; width:34px; height:1px; background:var(--gold); display:inline-block; }
+  .eyebrow.center::after{ content:""; width:34px; height:1px; background:var(--gold); display:inline-block; }
+  .eyebrow.no-dash::before{ display:none; }
+  .h-display{ font-family:"Cormorant Garamond",serif; font-weight:400; line-height:.98; letter-spacing:-.01em; }
+  .lead{ color:var(--muted); line-height:1.75; font-weight:300; }
+
+  /* ---------- Custom cursor (21st-style follower) ---------- */
+  .cursor-dot,.cursor-ring{ position:fixed; top:0; left:0; border-radius:50%; pointer-events:none; z-index:9999; mix-blend-mode:difference; }
+  .cursor-dot{ width:6px; height:6px; background:#fff; opacity:0; transform:translate(-50%,-50%); transition:opacity .3s, width .25s, height .25s; }
+  .cursor-ring{ width:38px; height:38px; border:1px solid rgba(255,255,255,.6); opacity:0; transform:translate(-50%,-50%); transition:width .3s ease, height .3s ease, opacity .3s, border-color .3s; }
+  .cursor-ring.hover{ width:64px; height:64px; border-color:var(--gold2); }
+  body.cursor-on .cursor-dot{ opacity:1; }
+  body.cursor-on .cursor-ring{ opacity:1; }
+  body.cursor-on .cursor-dot.hover{ opacity:0; }
+
+  /* ---------- Film grain ---------- */
+  .grain{
+    position:fixed; inset:-50%; width:200%; height:200%; pointer-events:none; z-index:9998; opacity:.05;
+    background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+    animation:grain 1s steps(4) infinite;
+  }
+  @keyframes grain{ 0%,100%{transform:translate(0,0)} 25%{transform:translate(-3%,2%)} 50%{transform:translate(2%,-3%)} 75%{transform:translate(-2%,-2%)} }
+
+  /* ---------- Preloader ---------- */
+  #preloader{ position:fixed; inset:0; z-index:10000; background:var(--espresso); display:flex; flex-direction:column; align-items:center; justify-content:center; gap:1.4rem; transition:opacity .8s ease, visibility .8s; }
+  #preloader.done{ opacity:0; visibility:hidden; }
+  .pl-word{ font-family:"Cormorant Garamond",serif; font-size:clamp(2.4rem,7vw,4.4rem); color:var(--cream); letter-spacing:.04em; }
+  .pl-bar{ width:160px; height:1px; background:rgba(247,241,232,.2); position:relative; overflow:hidden; }
+  .pl-bar::after{ content:""; position:absolute; inset:0; background:var(--gold2); transform:translateX(-100%); animation:plload 1.6s ease forwards; }
+  @keyframes plload{ to{ transform:translateX(0) } }
+
+  /* ---------- Reveal (BlurFade) ---------- */
+  .reveal{ opacity:0; transform:translateY(34px); filter:blur(12px); transition:opacity 1s cubic-bezier(.2,.7,.2,1), transform 1s cubic-bezier(.2,.7,.2,1), filter 1s ease; }
+  .reveal.in{ opacity:1; transform:none; filter:blur(0); }
+  .reveal-img{ clip-path:inset(0 100% 0 0); transition:clip-path 1.1s cubic-bezier(.76,0,.24,1); }
+  .reveal-img.in{ clip-path:inset(0 0 0 0); }
+
+  /* ---------- Marquee ---------- */
+  .marquee{ display:flex; overflow:hidden; user-select:none; gap:0; -webkit-mask-image:linear-gradient(90deg,transparent,#000 8%,#000 92%,transparent); mask-image:linear-gradient(90deg,transparent,#000 8%,#000 92%,transparent); }
+  .marquee__track{ display:flex; flex-shrink:0; align-items:center; gap:3rem; padding-right:3rem; animation:marq 28s linear infinite; }
+  .marquee:hover .marquee__track{ animation-play-state:paused; }
+  .marquee.no-pause:hover .marquee__track{ animation-play-state:running; }
+  @keyframes marq{ to{ transform:translateX(-100%) } }
+  .marq-item{ font-family:"Cormorant Garamond",serif; font-size:clamp(1.6rem,3.4vw,2.6rem); font-style:italic; color:var(--coffee); white-space:nowrap; display:inline-flex; align-items:center; gap:3rem; }
+  .marq-star{ color:var(--gold); font-style:normal; }
+
+  /* ---------- Shimmer button ---------- */
+  .btn-gold{
+    position:relative; overflow:hidden; isolation:isolate; display:inline-flex; align-items:center; gap:.7rem;
+    background:linear-gradient(105deg,var(--gold) 0%, var(--gold2) 50%, var(--gold) 100%);
+    color:#fff; font-weight:500; letter-spacing:.02em; padding:1rem 2.2rem; border-radius:999px;
+    transition:transform .4s cubic-bezier(.2,.7,.2,1), box-shadow .4s; box-shadow:0 10px 30px -12px rgba(183,153,95,.7);
+  }
+  .btn-gold::before{ content:""; position:absolute; inset:0; z-index:-1; background:linear-gradient(110deg,transparent 30%,rgba(255,255,255,.55) 50%,transparent 70%); transform:translateX(-120%); transition:none; }
+  .btn-gold:hover{ transform:translateY(-2px); box-shadow:0 18px 40px -14px rgba(183,153,95,.85); }
+  .btn-gold:hover::before{ animation:shine 1.1s ease; }
+  @keyframes shine{ to{ transform:translateX(120%) } }
+
+  .btn-ghost{ display:inline-flex; align-items:center; gap:.6rem; color:var(--espresso); font-weight:500; letter-spacing:.02em; padding:1rem 1.6rem; border:1px solid var(--line); border-radius:999px; background:rgba(255,255,255,.4); transition:all .4s; }
+  .btn-ghost:hover{ background:var(--espresso); color:var(--cream); border-color:var(--espresso); }
+
+  /* ---------- Border beam (rotating gradient border) ---------- */
+  .beam{ position:relative; }
+  .beam::after{
+    content:""; position:absolute; inset:0; border-radius:inherit; padding:1px; pointer-events:none;
+    background:conic-gradient(from var(--a,0deg), transparent 0deg, transparent 300deg, var(--gold2) 340deg, transparent 360deg);
+    -webkit-mask:linear-gradient(#000 0 0) content-box,linear-gradient(#000 0 0); -webkit-mask-composite:xor; mask-composite:exclude;
+    opacity:0; transition:opacity .5s;
+  }
+  .beam:hover::after{ opacity:1; animation:beam 3s linear infinite; }
+  @property --a{ syntax:'<angle>'; inherits:false; initial-value:0deg; }
+  @keyframes beam{ to{ --a:360deg } }
+
+  /* ---------- Cards ---------- */
+  .card{ position:relative; background:var(--paper); border:1px solid var(--line); border-radius:18px; transition:transform .5s cubic-bezier(.2,.7,.2,1), box-shadow .5s, border-color .5s; }
+  .card:hover{ transform:translateY(-7px); box-shadow:0 30px 60px -30px rgba(58,51,42,.4); border-color:rgba(183,153,95,.4); }
+  /* top-edge highlight rim on plates/cards */
+  .card::before{ content:""; position:absolute; inset:0; border-radius:inherit; padding:1.4px; pointer-events:none; z-index:2;
+    background:linear-gradient(180deg, var(--rim, rgba(120,103,82,.55)) 0%, transparent 42%);
+    -webkit-mask:linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0); -webkit-mask-composite:xor; mask-composite:exclude; }
+  .card-dark{ --rim:rgba(255,255,255,.85); }
+  .card.no-lift:hover{ transform:none; box-shadow:0 18px 42px -24px rgba(58,51,42,.5); }
+
+  .gal-item{ position:relative; overflow:hidden; border-radius:16px; }
+  .gal-item img{ transition:transform 1.1s cubic-bezier(.2,.7,.2,1); will-change:transform; }
+  .gal-item:hover img{ transform:scale(1.07); }
+  .gal-item::after{ content:""; position:absolute; inset:0; background:linear-gradient(to top,rgba(42,37,30,.55),transparent 55%); opacity:.85; transition:opacity .5s; }
+  .gal-cap{ position:absolute; left:0; right:0; bottom:0; padding:1.4rem 1.6rem; z-index:2; transform:translateY(8px); opacity:0; transition:all .5s; }
+  .gal-item:hover .gal-cap{ transform:none; opacity:1; }
+
+  /* ---------- Before / After slider ---------- */
+  .ba{ position:relative; overflow:hidden; border-radius:20px; width:100%; max-width:600px; aspect-ratio:3/4; margin-inline:auto; touch-action:none; box-shadow:0 40px 80px -40px rgba(58,51,42,.6); }
+  .ba img{ position:absolute; inset:0; width:100%; height:100%; object-fit:cover; pointer-events:none; -webkit-user-drag:none; }
+  .ba .ba-top{ clip-path:inset(0 calc(100% - var(--pos,50%)) 0 0); }
+  .ba-divider{ position:absolute; top:0; bottom:0; left:var(--pos,50%); width:2px; background:rgba(247,241,232,.92); transform:translateX(-50%); pointer-events:none; box-shadow:0 0 22px rgba(0,0,0,.45); z-index:3; }
+  .ba-knob{ position:absolute; top:50%; left:50%; transform:translate(-50%,-50%); width:54px; height:54px; border-radius:50%; background:rgba(247,241,232,.96); display:flex; align-items:center; justify-content:center; color:var(--espresso); box-shadow:0 10px 26px rgba(0,0,0,.4); }
+  .ba-range{ position:absolute; inset:0; width:100%; height:100%; margin:0; opacity:0; cursor:ew-resize; z-index:4; }
+  .ba-range:focus-visible + .ba-divider .ba-knob{ outline:3px solid var(--gold2); outline-offset:3px; }
+  .ba-label{ position:absolute; top:1.1rem; z-index:3; padding:.45rem 1.1rem; border-radius:999px; font-size:.66rem; letter-spacing:.22em; text-transform:uppercase; }
+  .ba-label-left{ left:1.1rem; background:rgba(42,37,30,.62); color:var(--cream); backdrop-filter:blur(6px); }
+  .ba-label-right{ right:1.1rem; background:var(--gold); color:#fff; }
+  /* before/after as the centre tile of the works quilt */
+  .ba-center{ max-width:none; border-radius:16px; box-shadow:0 24px 55px -30px rgba(58,51,42,.6); outline:1px solid rgba(183,153,95,.45); outline-offset:0; }
+
+  /* ---------- Nav ---------- */
+  #nav{ transition:all .5s cubic-bezier(.2,.7,.2,1); }
+  #nav.scrolled{ background:rgba(247,241,232,.82); backdrop-filter:blur(16px); box-shadow:0 1px 0 var(--line); }
+  .nav-link{ position:relative; font-size:.86rem; letter-spacing:.06em; color:var(--cream); padding:.3rem 0; transition:color .3s; }
+  .nav-link::after{ content:""; position:absolute; left:0; bottom:-2px; width:0; height:1px; background:var(--gold); transition:width .4s; }
+  .nav-link:hover::after{ width:100%; }
+  /* nav adapts: light over hero, dark once scrolled */
+  #nav .brand{ color:var(--cream); transition:color .4s; }
+  #nav .nav-phone{ color:rgba(247,241,232,.82); transition:color .3s; }
+  #nav .nav-phone:hover{ color:var(--gold2); }
+  #nav .burger-line{ background:var(--cream); transition:background .4s; }
+  #nav.scrolled .brand{ color:var(--espresso); }
+  #nav.scrolled .nav-link{ color:var(--espresso); }
+  #nav.scrolled .nav-phone{ color:var(--coffee); }
+  #nav.scrolled .nav-phone:hover{ color:var(--espresso); }
+  #nav.scrolled .burger-line{ background:var(--espresso); }
+
+  /* ---------- Inputs ---------- */
+  .field{ width:100%; background:rgba(255,255,255,.55); border:1px solid var(--line); border-radius:12px; padding:.95rem 1.1rem; font-size:.95rem; color:var(--ink); transition:all .35s; }
+  .field::placeholder{ color:#a89c88; }
+  .field:focus{ outline:none; border-color:var(--gold); background:#fff; box-shadow:0 0 0 4px rgba(183,153,95,.13); }
+  textarea.field{ resize:vertical; min-height:120px; }
+  .field-label{ font-size:.74rem; letter-spacing:.16em; text-transform:uppercase; color:var(--coffee); margin-bottom:.55rem; display:block; font-weight:500; }
+
+  .chip{ cursor:pointer; user-select:none; padding:.6rem 1.15rem; border-radius:999px; border:1px solid var(--line); background:rgba(255,255,255,.5); font-size:.85rem; color:var(--coffee); transition:all .3s; }
+  .chip:hover{ border-color:var(--gold); color:var(--espresso); }
+  .chip.active{ background:var(--espresso); color:var(--cream); border-color:var(--espresso); }
+  /* chips on dark sections (booking) — no !important conflicts so they actually select */
+  .chip-dark{ background:rgba(255,255,255,.06); border-color:rgba(255,255,255,.18); color:rgba(247,241,232,.82); }
+  .chip-dark:hover{ background:rgba(255,255,255,.1); border-color:var(--gold2); color:#fff; }
+  .chip-dark.active{ background:var(--gold); border-color:var(--gold); color:#fff; box-shadow:0 8px 20px -8px rgba(183,153,95,.75); }
+
+  /* ---------- Parallax band ---------- */
+  .parallax{ overflow:hidden; }
+  .parallax img{ will-change:transform; }
+
+  /* ---------- Mobile menu ---------- */
+  #mmenu{ transition:opacity .5s, visibility .5s; }
+  #mmenu .ml{ font-family:"Cormorant Garamond",serif; }
+
+  /* ---------- Misc ---------- */
+  .updown{ animation:updown 2.4s ease-in-out infinite; }
+  @keyframes updown{ 0%,100%{transform:translateY(0)} 50%{transform:translateY(8px)} }
+  .price-row{ transition:background .4s, padding .4s; }
+  .price-row:hover{ background:rgba(224,210,189,.35); }
+
+  @media (prefers-reduced-motion:reduce){
+    *{ animation:none !important; transition:none !important; scroll-behavior:auto !important; }
+    .reveal{ opacity:1 !important; transform:none !important; filter:none !important; }
+    .reveal-img{ clip-path:none !important; }
+    body{ cursor:auto !important; }
+    .cursor-dot,.cursor-ring,.grain{ display:none !important; }
+  }
+</style>
+</head>
+<body>
+
+<!-- ============ PRELOADER ============ -->
+<div id="preloader">
+  <div class="pl-word">élevé</div>
+  <div class="pl-bar"></div>
+</div>
+
+<!-- ============ TEXTURE / CURSOR ============ -->
+<div class="grain" aria-hidden="true"></div>
+<div class="cursor-ring" aria-hidden="true"></div>
+<div class="cursor-dot" aria-hidden="true"></div>
+
+<!-- ============ NAV ============ -->
+<header id="nav" class="fixed top-0 inset-x-0 z-[100]">
+  <nav class="w-full px-6 lg:px-12 h-20 flex items-center justify-between gap-6">
+    <a href="#hero" class="brand font-display text-3xl tracking-wide leading-none" data-cursor>élevé</a>
+
+    <div class="hidden lg:flex flex-1 items-center justify-evenly gap-8 xl:gap-12 px-6 xl:px-12">
+      <a href="#services" class="nav-link" data-cursor>Услуги</a>
+      <a href="#works" class="nav-link" data-cursor>Работы</a>
+      <a href="#price" class="nav-link" data-cursor>Прайс</a>
+      <a href="#reviews" class="nav-link" data-cursor>Отзывы</a>
+      <a href="#studio" class="nav-link" data-cursor>Студия</a>
+    </div>
+
+    <div class="flex items-center gap-4">
+      <a href="tel:+74951234567" class="nav-phone hidden md:flex items-center gap-2 text-sm" data-cursor>
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72c.13.96.36 1.9.7 2.81a2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45c.91.34 1.85.57 2.81.7A2 2 0 0 1 22 16.92z"/></svg>
+        +7 495 123-45-67
+      </a>
+      <a href="#booking" class="btn-gold text-sm !py-2.5 !px-5" data-cursor>Записаться</a>
+      <button id="burger" class="lg:hidden w-10 h-10 flex flex-col items-center justify-center gap-1.5" aria-label="Меню">
+        <span class="burger-line w-6 h-px transition-all"></span>
+        <span class="burger-line w-6 h-px transition-all"></span>
+      </button>
+    </div>
+  </nav>
+</header>
+
+<!-- ============ MOBILE MENU ============ -->
+<div id="mmenu" class="fixed inset-0 z-[99] bg-espresso text-cream opacity-0 invisible flex flex-col items-center justify-center gap-7">
+  <a href="#services" class="ml text-4xl" data-mclose>Услуги</a>
+  <a href="#works" class="ml text-4xl" data-mclose>Работы</a>
+  <a href="#price" class="ml text-4xl" data-mclose>Прайс</a>
+  <a href="#reviews" class="ml text-4xl" data-mclose>Отзывы</a>
+  <a href="#studio" class="ml text-4xl" data-mclose>Студия</a>
+  <a href="#booking" class="btn-gold mt-4" data-mclose>Онлайн-запись</a>
+</div>
+
+<main>
+<!-- ============ HERO ============ -->
+<section id="hero" class="relative min-h-screen flex items-end overflow-hidden">
+  <div class="parallax absolute inset-0 z-0">
+    <img id="heroImg" src="assets/hero.png" alt="Модель с роскошными волосами в студии élevé" class="w-full h-[115%] object-cover object-center" />
+    <div class="absolute inset-0" style="background:linear-gradient(to top,rgba(42,37,30,.72) 0%,rgba(42,37,30,.15) 45%,rgba(42,37,30,.35) 100%);"></div>
+    <div class="absolute inset-0" style="background:linear-gradient(to right,rgba(42,37,30,.45),transparent 55%);"></div>
+  </div>
+
+  <div class="relative z-10 w-full max-w-7xl mx-auto px-5 lg:px-8 pb-16 pt-32">
+    <p class="eyebrow no-dash mb-6 reveal" style="color:var(--gold2);">Premium Hair Studio</p>
+    <h1 class="h-display text-cream text-[clamp(3.4rem,12vw,9.5rem)] mb-6">
+      <span class="block reveal" data-delay="80">Красота</span>
+      <span class="block reveal italic font-light" data-delay="200" style="color:var(--gold2)">начинается</span>
+      <span class="block reveal" data-delay="320">с волос</span>
+    </h1>
+    <div class="flex flex-col md:flex-row md:items-end md:justify-between gap-8">
+      <p class="lead !text-cream/80 max-w-md reveal" data-delay="440">
+        Студия премиального ухода, где каждый образ создаётся вручную — от диагностики до финального блеска.
+      </p>
+      <div class="flex flex-wrap items-center gap-4 reveal" data-delay="560">
+        <a href="#booking" class="btn-gold" data-cursor>Записаться онлайн
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
+        </a>
+        <a href="#works" class="btn-ghost !text-cream !border-cream/30 hover:!bg-cream hover:!text-espresso" data-cursor>Смотреть работы</a>
+      </div>
+    </div>
+  </div>
+
+  <a href="#services" class="absolute bottom-7 left-1/2 -translate-x-1/2 z-10 text-cream/70 flex flex-col items-center gap-2 text-[.65rem] tracking-[.3em] uppercase" data-cursor>
+    Листайте
+    <svg class="updown" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4"><path d="M12 5v14M6 13l6 6 6-6"/></svg>
+  </a>
+</section>
+
+<!-- ============ MARQUEE STRIP ============ -->
+<div class="bg-sand py-6 border-y border-[var(--line)]">
+  <div class="marquee">
+    <div class="marquee__track">
+      <span class="marq-item">Балаяж <span class="marq-star">✦</span> Окрашивание <span class="marq-star">✦</span> Кератин <span class="marq-star">✦</span> Стрижка <span class="marq-star">✦</span> Уход SPA <span class="marq-star">✦</span> Укладка <span class="marq-star">✦</span> Шатуш <span class="marq-star">✦</span> Ботокс волос <span class="marq-star">✦</span></span>
+      <span class="marq-item" aria-hidden="true">Балаяж <span class="marq-star">✦</span> Окрашивание <span class="marq-star">✦</span> Кератин <span class="marq-star">✦</span> Стрижка <span class="marq-star">✦</span> Уход SPA <span class="marq-star">✦</span> Укладка <span class="marq-star">✦</span> Шатуш <span class="marq-star">✦</span> Ботокс волос <span class="marq-star">✦</span></span>
+    </div>
+  </div>
+</div>
+
+<!-- ============ SERVICES ============ -->
+<section id="services" class="py-24 lg:py-32 bg-cream">
+  <div class="max-w-7xl mx-auto px-5 lg:px-8">
+    <div class="flex flex-col lg:flex-row lg:items-end lg:justify-between gap-6 mb-16">
+      <div>
+        <p class="eyebrow mb-5 reveal">01 — Услуги</p>
+        <h2 class="h-display text-[clamp(2.6rem,6vw,5rem)] reveal" data-delay="100">Что мы<br><span class="italic" style="color:var(--gold)">создаём</span> для вас</h2>
+      </div>
+      <p class="lead max-w-sm reveal" data-delay="200">Полный спектр услуг для волос любой длины и состояния. Каждая процедура подбирается индивидуально.</p>
+    </div>
+
+    <div id="serviceGrid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5"></div>
+  </div>
+</section>
+
+<!-- ============ WORKS ============ -->
+<section id="works" class="py-24 lg:py-32 bg-sand">
+  <div class="max-w-7xl mx-auto px-5 lg:px-8">
+    <div class="text-center mb-14">
+      <p class="eyebrow center mb-5 reveal justify-center">02 — Наши работы</p>
+      <h2 class="h-display text-[clamp(2.6rem,6vw,5rem)] reveal" data-delay="100">Истории <span class="italic" style="color:var(--gold)">преображения</span></h2>
+      <p class="lead mt-4 max-w-xl mx-auto reveal" data-delay="160">В центре — сравнение «до / после»: потяните ползунок. Вокруг — ещё больше наших работ.</p>
+    </div>
+
+    <!-- Works quilt: before/after in the centre, works in a square around it -->
+    <div class="grid grid-cols-2 lg:grid-cols-3 gap-4 lg:gap-5 max-w-5xl mx-auto mt-4">
+      <a href="#booking" class="gal-item reveal block aspect-[3/4]" data-cursor>
+        <img src="assets/work-brunette.jpg" alt="Шоколадный балаяж" class="w-full h-full object-cover" loading="lazy" />
+        <div class="gal-cap"><p class="font-display text-cream text-xl lg:text-2xl">Шоколадный балаяж</p><p class="text-cream/70 text-sm">Сложное окрашивание</p></div>
+      </a>
+      <a href="#booking" class="gal-item reveal block aspect-[3/4]" data-delay="80" data-cursor>
+        <img src="assets/portrait.png" alt="Голливудская волна, тёплый блонд" class="w-full h-full object-cover" loading="lazy" />
+        <div class="gal-cap"><p class="font-display text-cream text-xl lg:text-2xl">Голливудская волна</p><p class="text-cream/70 text-sm">Окрашивание · укладка</p></div>
+      </a>
+      <a href="#booking" class="gal-item reveal block aspect-[3/4]" data-delay="160" data-cursor>
+        <img src="assets/work-copper.jpg" alt="Медное окрашивание" class="w-full h-full object-cover" loading="lazy" />
+        <div class="gal-cap"><p class="font-display text-cream text-xl lg:text-2xl">Медь</p><p class="text-cream/70 text-sm">Яркое окрашивание</p></div>
+      </a>
+
+      <a href="#booking" class="gal-item reveal block aspect-[3/4]" data-delay="80" data-cursor>
+        <img src="assets/work-curls.jpg" alt="Объёмные локоны и текстура" class="w-full h-full object-cover" loading="lazy" />
+        <div class="gal-cap"><p class="font-display text-cream text-xl lg:text-2xl">Объём и локоны</p><p class="text-cream/70 text-sm">Стрижка · укладка</p></div>
+      </a>
+
+      <!-- CENTRE — before / after slider -->
+      <div class="reveal col-span-2 lg:col-span-1" data-delay="120">
+        <div class="ba ba-center" style="--pos:50%">
+          <img class="ba-base" src="assets/after.jpg" alt="После — результат окрашивания и восстановления" />
+          <img class="ba-top"  src="assets/before.jpg" alt="До — исходное состояние волос" />
+          <span class="ba-label ba-label-left">До</span>
+          <span class="ba-label ba-label-right">После</span>
+          <div class="ba-divider"><div class="ba-knob"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M9 7l-5 5 5 5M15 7l5 5-5 5"/></svg></div></div>
+          <input type="range" class="ba-range" min="0" max="100" value="50" aria-label="Сравнение до и после" />
+        </div>
+      </div>
+
+      <a href="#booking" class="gal-item reveal block aspect-[3/4]" data-delay="160" data-cursor>
+        <img src="assets/work-keratin.jpg" alt="Гладкие зеркальные волосы после кератина" class="w-full h-full object-cover" loading="lazy" />
+        <div class="gal-cap"><p class="font-display text-cream text-xl lg:text-2xl">Зеркальная гладкость</p><p class="text-cream/70 text-sm">Кератин · ботокс</p></div>
+      </a>
+
+      <a href="#booking" class="gal-item reveal block aspect-[3/4]" data-delay="80" data-cursor>
+        <img src="assets/products.png" alt="Премиальные средства ухода" class="w-full h-full object-cover" loading="lazy" />
+        <div class="gal-cap"><p class="font-display text-cream text-xl lg:text-2xl">Премиальный уход</p><p class="text-cream/70 text-sm">Домашние ритуалы</p></div>
+      </a>
+      <a href="#booking" class="gal-item reveal block aspect-[3/4]" data-delay="120" data-cursor>
+        <img src="assets/stylist.png" alt="Работа мастера с клиентом" class="w-full h-full object-cover" loading="lazy" />
+        <div class="gal-cap"><p class="font-display text-cream text-xl lg:text-2xl">Работа мастера</p><p class="text-cream/70 text-sm">Индивидуальный подход</p></div>
+      </a>
+      <a href="#booking" class="gal-item reveal block aspect-[3/4]" data-delay="160" data-cursor>
+        <img src="assets/work-updo.jpg" alt="Вечерний пучок" class="w-full h-full object-cover" loading="lazy" />
+        <div class="gal-cap"><p class="font-display text-cream text-xl lg:text-2xl">Вечерний образ</p><p class="text-cream/70 text-sm">Причёска · укладка</p></div>
+      </a>
+    </div>
+
+    <div class="text-center mt-14 reveal">
+      <a href="#booking" class="btn-gold" data-cursor>Хочу так же — записаться</a>
+    </div>
+  </div>
+</section>
+
+<!-- (Секции «Почему élevé» и «Студия» объединены и перенесены ниже — см. секцию #studio перед записью) -->
+
+<!-- ============ PRICE ============ -->
+<section id="price" class="py-24 lg:py-32 bg-paper">
+  <div class="max-w-5xl mx-auto px-5 lg:px-8">
+    <div class="text-center mb-16">
+      <p class="eyebrow center justify-center mb-5 reveal">03 — Прайс</p>
+      <h2 class="h-display text-[clamp(2.6rem,6vw,5rem)] reveal" data-delay="100">Прозрачные <span class="italic" style="color:var(--gold)">цены</span></h2>
+      <p class="lead mt-4 reveal" data-delay="160">Финальная стоимость зависит от длины и состояния волос. Точную цену назовём на бесплатной консультации.</p>
+    </div>
+
+    <div id="priceList" class="reveal divide-y divide-[var(--line)] border-y border-[var(--line)]"></div>
+
+    <div class="text-center mt-12 reveal">
+      <a href="#booking" class="btn-gold" data-cursor>Узнать точную стоимость</a>
+    </div>
+  </div>
+</section>
+
+<!-- ============ REVIEWS ============ -->
+<section id="reviews" class="py-24 lg:py-32 bg-sand overflow-hidden">
+  <div class="max-w-7xl mx-auto px-5 lg:px-8 mb-14">
+    <div class="text-center">
+      <p class="eyebrow center justify-center mb-5 reveal">04 — Отзывы</p>
+      <h2 class="h-display text-[clamp(2.6rem,6vw,5rem)] reveal" data-delay="100">Что говорят <span class="italic" style="color:var(--gold)">клиенты</span></h2>
+    </div>
+  </div>
+  <div class="marquee no-pause py-6" style="--mask:1">
+    <div class="marquee__track" id="reviewTrack" style="animation-duration:48s; gap:1.5rem; padding-right:1.5rem;"></div>
+    <div class="marquee__track" id="reviewTrack2" aria-hidden="true" style="animation-duration:48s; gap:1.5rem; padding-right:1.5rem;"></div>
+  </div>
+</section>
+
+<!-- ============ STUDIO / PHILOSOPHY / SPA (atmosphere background) ============ -->
+<section id="studio" class="relative py-28 lg:py-36 text-cream overflow-hidden bg-[#1f1a14]">
+  <div class="parallax absolute inset-0 z-0">
+    <img id="studioImg" src="assets/interior.png" alt="Атмосфера студии élevé — тёплые арки и мягкий свет" class="absolute inset-x-0 top-[-10%] w-full h-[120%] object-cover" loading="lazy" />
+    <div class="absolute inset-0" style="background:linear-gradient(to right, rgba(34,29,23,.93) 0%, rgba(34,29,23,.8) 48%, rgba(34,29,23,.62) 100%);"></div>
+  </div>
+  <div class="relative z-10 max-w-7xl mx-auto px-5 lg:px-8">
+    <div class="grid lg:grid-cols-2 gap-14 items-center">
+      <div>
+        <p class="eyebrow mb-5 reveal" style="color:var(--gold2)">05 — Как мы работаем</p>
+        <h2 class="h-display text-[clamp(2.4rem,5.5vw,4.6rem)] mb-7 reveal" data-delay="100">Философия<br><span class="italic" style="color:var(--gold2)">осознанного ухода</span></h2>
+        <p class="lead !text-cream/75 max-w-md mb-7 reveal" data-delay="180">
+          Каждый визит начинается с диагностики и чашки кофе. Мы подбираем уход и цвет под структуру именно ваших волос, работаем только премиальной косметикой и сопровождаем вас до следующего визита. Тёплый свет, натуральные материалы и тишина — пространство, где отдыхает душа.
+        </p>
+        <ul class="space-y-4">
+          <li class="flex items-center gap-4 reveal" data-delay="240"><span class="text-gold2">✦</span><span class="text-cream/85">Бесплатная диагностика и подбор образа</span></li>
+          <li class="flex items-center gap-4 reveal" data-delay="300"><span class="text-gold2">✦</span><span class="text-cream/85">SPA-ритуалы и глубокое восстановление волос</span></li>
+          <li class="flex items-center gap-4 reveal" data-delay="360"><span class="text-gold2">✦</span><span class="text-cream/85">Премиальные средства и авторские техники</span></li>
+          <li class="flex items-center gap-4 reveal" data-delay="420"><span class="text-gold2">✦</span><span class="text-cream/85">Гарантия результата и сопровождение ухода</span></li>
+        </ul>
+      </div>
+
+      <div class="grid grid-cols-2 gap-5">
+        <div class="card card-dark p-7 reveal" style="background:rgba(255,255,255,.06);border-color:rgba(255,255,255,.12)"><div class="font-display text-6xl text-gold2"><span class="num" data-to="12">0</span></div><p class="text-cream/65 mt-2 text-sm">лет на рынке красоты</p></div>
+        <div class="card card-dark p-7 reveal" data-delay="80" style="background:rgba(255,255,255,.06);border-color:rgba(255,255,255,.12)"><div class="font-display text-6xl text-gold2"><span class="num" data-to="8000">0</span>+</div><p class="text-cream/65 mt-2 text-sm">довольных клиентов</p></div>
+        <div class="card card-dark p-7 reveal" data-delay="160" style="background:rgba(255,255,255,.06);border-color:rgba(255,255,255,.12)"><div class="font-display text-6xl text-gold2"><span class="num" data-to="14">0</span></div><p class="text-cream/65 mt-2 text-sm">мастеров-экспертов</p></div>
+        <div class="card card-dark p-7 reveal" data-delay="240" style="background:rgba(255,255,255,.06);border-color:rgba(255,255,255,.12)"><div class="font-display text-6xl text-gold2"><span class="num" data-to="98">0</span>%</div><p class="text-cream/65 mt-2 text-sm">возвращаются снова</p></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ BOOKING / QUESTIONNAIRE ============ -->
+<section id="booking" class="py-24 lg:py-32 bg-espresso text-cream relative overflow-hidden">
+  <div class="absolute inset-0 z-0">
+    <img src="assets/booking-bg.jpg" alt="" aria-hidden="true" class="w-full h-full object-cover opacity-45" loading="lazy" />
+    <div class="absolute inset-0" style="background:linear-gradient(to right, rgba(34,29,23,.95) 0%, rgba(34,29,23,.86) 42%, rgba(34,29,23,.74) 100%);"></div>
+  </div>
+  <div class="absolute -top-24 -right-24 w-96 h-96 rounded-full z-0" style="background:radial-gradient(circle,rgba(205,176,122,.18),transparent 70%)"></div>
+  <div class="max-w-7xl mx-auto px-5 lg:px-8 relative z-10">
+    <div class="grid lg:grid-cols-[0.85fr_1.15fr] gap-12 lg:gap-16 items-stretch">
+
+      <!-- Left: pitch + image -->
+      <div class="flex flex-col justify-between">
+        <div>
+          <p class="eyebrow mb-5 reveal" style="color:var(--gold2)">06 — Онлайн-запись</p>
+          <h2 class="h-display text-[clamp(2.6rem,6vw,4.8rem)] mb-6 reveal" data-delay="100">Заполните <span class="italic" style="color:var(--gold2)">анкету</span> записи</h2>
+          <p class="lead !text-cream/70 max-w-md mb-8 reveal" data-delay="200">Ответьте на несколько вопросов — мастер подготовится к вашему визиту заранее. Мы перезвоним в течение 15 минут, чтобы подтвердить время.</p>
+        </div>
+        <div class="reveal-img rounded-2xl overflow-hidden hidden lg:block" data-delay="200">
+          <img src="assets/products.png" alt="Премиальные средства для ухода в студии élevé" class="w-full h-72 object-cover" loading="lazy" />
+        </div>
+        <div class="mt-8 space-y-3 reveal" data-delay="300">
+          <a href="tel:+74951234567" class="flex items-center gap-3 text-cream/80 hover:text-gold2 transition-colors" data-cursor>
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72c.13.96.36 1.9.7 2.81a2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45c.91.34 1.85.57 2.81.7A2 2 0 0 1 22 16.92z"/></svg>
+            +7 495 123-45-67
+          </a>
+          <p class="flex items-center gap-3 text-cream/80"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg> Москва, ул. Тверская, 18</p>
+          <p class="flex items-center gap-3 text-cream/80"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg> Ежедневно · 09:00 — 21:00</p>
+        </div>
+      </div>
+
+      <!-- Right: the form -->
+      <div class="card card-dark p-6 lg:p-10 reveal" data-delay="120" style="background:rgba(34,29,23,.74);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);border-color:rgba(255,255,255,.12)">
+        <form id="bookingForm" novalidate>
+          <div class="grid sm:grid-cols-2 gap-5">
+            <div>
+              <label class="field-label !text-gold2" for="f-name">Ваше имя *</label>
+              <input class="field !bg-white/5 !border-white/15 !text-cream" id="f-name" name="name" type="text" placeholder="Анна" required />
+            </div>
+            <div>
+              <label class="field-label !text-gold2" for="f-phone">Телефон *</label>
+              <input class="field !bg-white/5 !border-white/15 !text-cream" id="f-phone" name="phone" type="tel" placeholder="+7 (___) ___-__-__" required />
+            </div>
+          </div>
+
+          <div class="mt-6">
+            <span class="field-label !text-gold2">Желаемая услуга</span>
+            <div class="flex flex-wrap gap-2.5" data-chipgroup="service">
+              <span class="chip chip-dark" data-val="Стрижка">Стрижка</span>
+              <span class="chip chip-dark" data-val="Окрашивание">Окрашивание</span>
+              <span class="chip chip-dark" data-val="Балаяж / Шатуш">Балаяж / Шатуш</span>
+              <span class="chip chip-dark" data-val="Кератин">Кератин</span>
+              <span class="chip chip-dark" data-val="Уход SPA">Уход SPA</span>
+              <span class="chip chip-dark" data-val="Укладка">Укладка</span>
+              <span class="chip chip-dark" data-val="Другое">Другое</span>
+            </div>
+          </div>
+
+          <div class="mt-6">
+            <span class="field-label !text-gold2">Длина волос</span>
+            <div class="flex flex-wrap gap-2.5" data-chipgroup="length">
+              <span class="chip chip-dark" data-val="Короткие">Короткие</span>
+              <span class="chip chip-dark" data-val="Средние">Средние</span>
+              <span class="chip chip-dark" data-val="Длинные">Длинные</span>
+            </div>
+          </div>
+
+          <div class="grid sm:grid-cols-3 gap-5 mt-6">
+            <div>
+              <label class="field-label !text-gold2" for="f-master">Мастер</label>
+              <select class="field !bg-white/5 !border-white/15 !text-cream" id="f-master" name="master">
+                <option style="color:#000">Любой мастер</option>
+                <option style="color:#000">Виктория</option>
+                <option style="color:#000">Алина</option>
+                <option style="color:#000">Марк</option>
+              </select>
+            </div>
+            <div>
+              <label class="field-label !text-gold2" for="f-date">Дата</label>
+              <input class="field !bg-white/5 !border-white/15 !text-cream" id="f-date" name="date" type="date" />
+            </div>
+            <div>
+              <label class="field-label !text-gold2" for="f-time">Время</label>
+              <select class="field !bg-white/5 !border-white/15 !text-cream" id="f-time" name="time">
+                <option style="color:#000">Утро (09–12)</option>
+                <option style="color:#000">День (12–17)</option>
+                <option style="color:#000">Вечер (17–21)</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="mt-6">
+            <label class="field-label !text-gold2" for="f-comment">Пожелания к визиту</label>
+            <textarea class="field !bg-white/5 !border-white/15 !text-cream" id="f-comment" name="comment" placeholder="Референсы, особенности волос, аллергии…"></textarea>
+          </div>
+
+          <label class="flex items-start gap-3 mt-6 cursor-pointer text-cream/60 text-sm" data-cursor>
+            <input type="checkbox" id="f-agree" class="mt-1 accent-gold w-4 h-4" required />
+            <span>Я согласен(на) на обработку персональных данных и ознакомлен(а) с политикой конфиденциальности.</span>
+          </label>
+
+          <button type="submit" class="btn-gold w-full justify-center mt-8 !py-4 text-base" data-cursor>
+            <span class="btn-text">Отправить заявку</span>
+            <svg class="btn-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
+          </button>
+
+          <!-- success state -->
+          <div id="formSuccess" class="hidden text-center py-10">
+            <div class="w-16 h-16 mx-auto rounded-full bg-gold flex items-center justify-center mb-5">
+              <svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2"><path d="M20 6 9 17l-5-5"/></svg>
+            </div>
+            <p class="font-display text-3xl text-cream mb-2">Спасибо, заявка принята!</p>
+            <p class="text-cream/60">Мы перезвоним в течение 15 минут, чтобы подтвердить вашу запись.</p>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</section>
+</main>
+
+<!-- ============ FOOTER ============ -->
+<footer class="bg-ink text-cream/70 pt-20 pb-10">
+  <div class="max-w-7xl mx-auto px-5 lg:px-8">
+    <div class="grid md:grid-cols-4 gap-10 pb-14 border-b border-white/10">
+      <div class="md:col-span-2">
+        <a href="#hero" class="font-display text-4xl text-cream" data-cursor>élevé</a>
+        <p class="lead !text-cream/50 max-w-sm mt-4">Премиальная студия ухода за волосами. Создаём образы, в которые влюбляются.</p>
+        <div class="flex gap-3 mt-6">
+          <a href="#" aria-label="Instagram" class="w-10 h-10 rounded-full border border-white/15 flex items-center justify-center hover:bg-gold hover:border-gold transition-colors" data-cursor><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="2" y="2" width="20" height="20" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.5" cy="6.5" r="1" fill="currentColor" stroke="none"/></svg></a>
+          <a href="#" aria-label="Telegram" class="w-10 h-10 rounded-full border border-white/15 flex items-center justify-center hover:bg-gold hover:border-gold transition-colors" data-cursor><svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M21.94 4.6 18.6 19.2c-.25 1.1-.9 1.37-1.83.85l-5.05-3.72-2.44 2.35c-.27.27-.5.5-1.02.5l.36-5.13L17.9 6.2c.4-.36-.09-.56-.62-.2L6.6 12.55l-4.5-1.41c-.98-.3-1-.98.2-1.45l17.6-6.78c.82-.3 1.53.2 1.26 1.46z"/></svg></a>
+          <a href="#" aria-label="WhatsApp" class="w-10 h-10 rounded-full border border-white/15 flex items-center justify-center hover:bg-gold hover:border-gold transition-colors" data-cursor><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M21 11.5a8.5 8.5 0 0 1-12.6 7.4L3 21l2.2-5.3A8.5 8.5 0 1 1 21 11.5z"/></svg></a>
+        </div>
+      </div>
+      <div>
+        <p class="text-cream text-sm tracking-[.2em] uppercase mb-5">Навигация</p>
+        <ul class="space-y-3 text-sm">
+          <li><a href="#services" class="hover:text-gold2 transition-colors" data-cursor>Услуги</a></li>
+          <li><a href="#works" class="hover:text-gold2 transition-colors" data-cursor>Наши работы</a></li>
+          <li><a href="#price" class="hover:text-gold2 transition-colors" data-cursor>Прайс</a></li>
+          <li><a href="#booking" class="hover:text-gold2 transition-colors" data-cursor>Онлайн-запись</a></li>
+        </ul>
+      </div>
+      <div>
+        <p class="text-cream text-sm tracking-[.2em] uppercase mb-5">Контакты</p>
+        <ul class="space-y-3 text-sm">
+          <li>Москва, ул. Тверская, 18</li>
+          <li><a href="tel:+74951234567" class="hover:text-gold2 transition-colors" data-cursor>+7 495 123-45-67</a></li>
+          <li>Ежедневно 09:00 — 21:00</li>
+          <li><a href="mailto:hello@eleve.studio" class="hover:text-gold2 transition-colors" data-cursor>hello@eleve.studio</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="flex flex-col md:flex-row justify-between items-center gap-4 pt-8 text-xs text-cream/40">
+      <p>© 2026 élevé — Premium Hair Studio. Все права защищены.</p>
+      <p>Сделано с любовью к волосам</p>
+    </div>
+  </div>
+</footer>
+
+<script>
+/* =========================================================
+   DATA
+   ========================================================= */
+const SERVICES = [
+  { t:'Стрижка', d:'Женские, мужские и детские стрижки с учётом формы лица.', p:'от 2 500 ₽',
+    icon:'<path d="M6 9a3 3 0 1 0 0-6 3 3 0 0 0 0 6zM6 21a3 3 0 1 0 0-6 3 3 0 0 0 0 6zM8.6 8.6 20 20M8.6 15.4 20 4"/>' },
+  { t:'Окрашивание', d:'Однотонное, сложное и тонирование премиум-красителями.', p:'от 4 900 ₽',
+    icon:'<path d="M12 2s6 6.5 6 11a6 6 0 0 1-12 0c0-4.5 6-11 6-11z"/>' },
+  { t:'Балаяж / Шатуш', d:'Естественные переливы и эффект выгоревших на солнце волос.', p:'от 7 900 ₽',
+    icon:'<path d="M3 12c4-6 14-6 18 0M3 17c4-6 14-6 18 0M3 7c4-6 14-6 18 0"/>' },
+  { t:'Кератин', d:'Выпрямление и восстановление структуры волоса.', p:'от 6 500 ₽',
+    icon:'<path d="M12 3v18M7 8c0 3 2 5 5 5s5-2 5-5M7 16c0-3 2-5 5-5"/>' },
+  { t:'Уход SPA', d:'Глубокое питание, ботокс и ритуалы восстановления.', p:'от 3 200 ₽',
+    icon:'<path d="M12 21c5-4 8-7.5 8-11a4 4 0 0 0-8-1 4 4 0 0 0-8 1c0 3.5 3 7 8 11z"/>' },
+  { t:'Укладки', d:'Голливудские локоны, вечерние и повседневные образы.', p:'от 2 800 ₽',
+    icon:'<path d="M4 18c2-8 6-12 8-12s6 4 8 12M8 18c1-5 3-8 4-8s3 3 4 8"/>' },
+  { t:'Наращивание', d:'Капсульное и ленточное — длина и объём за один визит.', p:'от 12 000 ₽',
+    icon:'<path d="M5 3v18M10 3v18M15 3v18M20 3v18"/>' },
+  { t:'Свадебный образ', d:'Причёска и репетиция для самого важного дня.', p:'от 8 000 ₽',
+    icon:'<path d="M12 2l2.5 6.5L21 9l-5 4.5L17.5 21 12 17l-5.5 4L8 13.5 3 9l6.5-.5z"/>' },
+];
+
+const PRICES = [
+  ['Женская стрижка', 'Мытьё, стрижка, укладка', '2 500 – 4 500 ₽'],
+  ['Окрашивание в один тон', 'Краситель премиум-класса', '4 900 – 7 500 ₽'],
+  ['Балаяж / Шатуш / Airtouch', 'Сложное окрашивание + тонирование', '7 900 – 16 000 ₽'],
+  ['Кератиновое выпрямление', 'По длине волос', '6 500 – 12 000 ₽'],
+  ['SPA-уход / Ботокс волос', 'Глубокое восстановление', '3 200 – 6 000 ₽'],
+  ['Вечерняя укладка', 'Локоны, объём, фиксация', '2 800 – 5 000 ₽'],
+  ['Наращивание волос', 'Капсульное / ленточное', 'от 12 000 ₽'],
+];
+
+const REVIEWS = [
+  { n:'Мария К.', s:'Балаяж', t:'Лучший блонд в моей жизни! Мастер услышала все пожелания, волосы живые и блестящие. Уже записалась снова.' },
+  { n:'Екатерина В.', s:'Кератин', t:'Хожу уже второй год. Атмосфера, забота, кофе и идеальный результат каждый раз. Это моя студия навсегда.' },
+  { n:'Анна Д.', s:'Окрашивание', t:'Сделали сложное окрашивание после неудачного опыта в другом салоне — спасли волосы и цвет получился мечты.' },
+  { n:'Ольга П.', s:'Уход SPA', t:'После SPA-ухода волосы как шёлк. Очень внимательные мастера, всё объяснили про домашний уход.' },
+  { n:'Дарья С.', s:'Стрижка', t:'Наконец-то нашла своего мастера! Стрижка отрастает красиво, укладывается за 5 минут. Спасибо élevé!' },
+  { n:'Ирина М.', s:'Свадебный образ', t:'Делала свадебную причёску — продержалась весь день и ночь. Все гости спрашивали, где я делала. Восторг!' },
+];
+
+/* =========================================================
+   RENDER
+   ========================================================= */
+const svgWrap = (p) => `<svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round">${p}</svg>`;
+
+document.getElementById('serviceGrid').innerHTML = SERVICES.map((s,i)=>`
+  <div class="card beam p-7 reveal flex flex-col" data-delay="${(i%4)*80}" data-cursor>
+    <div class="w-12 h-12 rounded-full bg-beige/60 text-coffee flex items-center justify-center mb-6">${svgWrap(s.icon)}</div>
+    <h3 class="font-display text-2xl mb-2">${s.t}</h3>
+    <p class="text-sm text-[var(--muted)] leading-relaxed flex-1">${s.d}</p>
+    <p class="mt-5 text-gold font-medium">${s.p}</p>
+  </div>`).join('');
+
+document.getElementById('priceList').innerHTML = PRICES.map(([t,d,p])=>`
+  <div class="price-row flex items-center justify-between gap-4 px-4 py-5">
+    <div><p class="font-display text-xl lg:text-2xl text-ink">${t}</p><p class="text-sm text-[var(--muted)]">${d}</p></div>
+    <p class="text-gold font-medium whitespace-nowrap text-lg">${p}</p>
+  </div>`).join('');
+
+const reviewCard = (r)=>`
+  <div class="card no-lift !bg-paper p-7 w-[300px] sm:w-[380px] h-[300px] shrink-0 flex flex-col">
+    <div class="flex gap-1 text-gold mb-4">${'<svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l2.9 6.1 6.6.8-4.9 4.5 1.3 6.6L12 17.3 6.1 20l1.3-6.6L2.5 8.9l6.6-.8z"/></svg>'.repeat(5)}</div>
+    <p class="text-[var(--coffee)] leading-relaxed mb-6 flex-1">«${r.t}»</p>
+    <div class="flex items-center gap-3 pt-4 border-t border-[var(--line)]">
+      <div class="w-10 h-10 rounded-full bg-beige flex items-center justify-center font-display text-lg text-coffee">${r.n[0]}</div>
+      <div><p class="font-medium text-ink">${r.n}</p><p class="text-xs text-[var(--muted)]">${r.s}</p></div>
+    </div>
+  </div>`;
+document.getElementById('reviewTrack').innerHTML = REVIEWS.map(reviewCard).join('');
+document.getElementById('reviewTrack2').innerHTML = REVIEWS.map(reviewCard).join('');
+
+/* =========================================================
+   PRELOADER
+   ========================================================= */
+window.addEventListener('load', ()=> setTimeout(()=> document.getElementById('preloader').classList.add('done'), 1700));
+
+/* =========================================================
+   REVEAL on scroll (BlurFade)
+   ========================================================= */
+const io = new IntersectionObserver((entries)=>{
+  entries.forEach(e=>{
+    if(e.isIntersecting){
+      const d = e.target.dataset.delay || 0;
+      setTimeout(()=> e.target.classList.add('in'), d);
+      io.unobserve(e.target);
+    }
+  });
+}, { threshold:.12, rootMargin:'0px 0px -8% 0px' });
+document.querySelectorAll('.reveal, .reveal-img').forEach(el=> io.observe(el));
+
+/* =========================================================
+   NUMBER TICKER
+   ========================================================= */
+const animateNum = (el)=>{
+  const to = +el.dataset.to, dur = 1800, start = performance.now();
+  const fmt = (n)=> n.toLocaleString('ru-RU');
+  const step = (now)=>{
+    const p = Math.min((now-start)/dur, 1);
+    const eased = 1 - Math.pow(1-p, 3);
+    el.textContent = fmt(Math.round(to*eased));
+    if(p<1) requestAnimationFrame(step);
+  };
+  requestAnimationFrame(step);
+};
+const numIO = new IntersectionObserver((entries)=>{
+  entries.forEach(e=>{ if(e.isIntersecting){ animateNum(e.target); numIO.unobserve(e.target); } });
+}, { threshold:.6 });
+document.querySelectorAll('.num').forEach(el=> numIO.observe(el));
+
+/* =========================================================
+   NAV scroll state + mobile menu
+   ========================================================= */
+const nav = document.getElementById('nav');
+addEventListener('scroll', ()=> nav.classList.toggle('scrolled', scrollY > 40));
+
+const burger = document.getElementById('burger');
+const mmenu = document.getElementById('mmenu');
+const toggleMenu = (open)=>{
+  mmenu.classList.toggle('opacity-0', !open);
+  mmenu.classList.toggle('invisible', !open);
+  document.body.style.overflow = open ? 'hidden' : '';
+};
+burger.addEventListener('click', ()=> toggleMenu(mmenu.classList.contains('invisible')));
+document.querySelectorAll('[data-mclose]').forEach(a=> a.addEventListener('click', ()=> toggleMenu(false)));
+
+/* =========================================================
+   PARALLAX (hero + studio)
+   ========================================================= */
+const heroImg = document.getElementById('heroImg');
+const studioImg = document.getElementById('studioImg');
+let ticking = false;
+const onScroll = ()=>{
+  if(ticking) return; ticking = true;
+  requestAnimationFrame(()=>{
+    const y = scrollY;
+    if(heroImg) heroImg.style.transform = `translateY(${y * 0.18}px) scale(1.05)`;
+    if(studioImg){
+      const rect = studioImg.parentElement.getBoundingClientRect();
+      const off = (rect.top - innerHeight) * -0.06;
+      studioImg.style.transform = `translateY(${Math.max(-40, Math.min(40, off))}px)`;
+    }
+    ticking = false;
+  });
+};
+addEventListener('scroll', onScroll, { passive:true });
+
+/* =========================================================
+   CHIP groups (click + keyboard, accessible)
+   ========================================================= */
+document.querySelectorAll('[data-chipgroup]').forEach(group=>{
+  const chips = group.querySelectorAll('.chip');
+  chips.forEach(c=>{ c.setAttribute('role','button'); c.setAttribute('tabindex','0'); c.setAttribute('aria-pressed','false'); });
+  const select = (chip)=>{
+    chips.forEach(c=>{ c.classList.remove('active'); c.setAttribute('aria-pressed','false'); });
+    chip.classList.add('active'); chip.setAttribute('aria-pressed','true');
+  };
+  group.addEventListener('click', (e)=>{ const chip = e.target.closest('.chip'); if(chip) select(chip); });
+  group.addEventListener('keydown', (e)=>{ if(e.key==='Enter' || e.key===' '){ const chip = e.target.closest('.chip'); if(chip){ e.preventDefault(); select(chip); } } });
+});
+
+/* =========================================================
+   BEFORE / AFTER slider (drag + keyboard + intro sweep)
+   ========================================================= */
+document.querySelectorAll('.ba').forEach(ba=>{
+  const range = ba.querySelector('.ba-range');
+  if(!range) return;
+  const set = (v)=> ba.style.setProperty('--pos', v + '%');
+  range.addEventListener('input', ()=> set(range.value));
+  if(matchMedia('(prefers-reduced-motion:reduce)').matches){ set(50); return; }
+  const baIO = new IntersectionObserver((es)=>{ es.forEach(e=>{ if(e.isIntersecting){ sweep(); baIO.unobserve(e.target); } }); }, { threshold:.4 });
+  baIO.observe(ba);
+  function sweep(){
+    const keys=[50,75,25,50], dur=750;
+    const run=(i)=>{ if(i>=keys.length){ range.value=50; set(50); return; }
+      const from=(i===0?50:keys[i-1]), to=keys[i], t0=performance.now();
+      const step=(now)=>{ const p=Math.min((now-t0)/dur,1), e=1-Math.pow(1-p,3), val=from+(to-from)*e; set(val); range.value=val; if(p<1) requestAnimationFrame(step); else run(i+1); };
+      requestAnimationFrame(step);
+    };
+    run(0);
+  }
+});
+
+/* =========================================================
+   BOOKING FORM
+   ========================================================= */
+const form = document.getElementById('bookingForm');
+form.addEventListener('submit', (e)=>{
+  e.preventDefault();
+  const name = document.getElementById('f-name');
+  const phone = document.getElementById('f-phone');
+  const agree = document.getElementById('f-agree');
+  let ok = true;
+  [name, phone].forEach(f=>{
+    if(!f.value.trim()){ f.style.borderColor = '#e0a3a3'; ok = false; }
+    else f.style.borderColor = '';
+  });
+  if(!agree.checked){ agree.parentElement.style.color = '#e0a3a3'; ok = false; }
+  else agree.parentElement.style.color = '';
+  if(!ok) return;
+
+  [...form.children].forEach(el=>{ if(el.id !== 'formSuccess') el.style.display = 'none'; });
+  document.getElementById('formSuccess').classList.remove('hidden');
+});
+
+/* =========================================================
+   CUSTOM CURSOR
+   ========================================================= */
+(function(){
+  if(matchMedia('(pointer:coarse)').matches) return;
+  const dot = document.querySelector('.cursor-dot');
+  const ring = document.querySelector('.cursor-ring');
+  let mx=0,my=0,rx=0,ry=0;
+  addEventListener('mousemove', e=>{ document.body.classList.add('cursor-on'); mx=e.clientX; my=e.clientY; dot.style.left=mx+'px'; dot.style.top=my+'px'; });
+  const loop = ()=>{ rx+=(mx-rx)*0.18; ry+=(my-ry)*0.18; ring.style.left=rx+'px'; ring.style.top=ry+'px'; requestAnimationFrame(loop); };
+  loop();
+  const hov = (on)=>{ ring.classList.toggle('hover',on); dot.classList.toggle('hover',on); };
+  document.addEventListener('mouseover', e=>{ if(e.target.closest('[data-cursor],a,button,.chip,input,textarea,select')) hov(true); });
+  document.addEventListener('mouseout', e=>{ if(e.target.closest('[data-cursor],a,button,.chip,input,textarea,select')) hov(false); });
+})();
+</script>
+</body>
+</html>

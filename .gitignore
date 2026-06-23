@@ -1,0 +1,8 @@
+# Reference & local-only files (not part of the deployed site)
+ChatGPT*.png
+main.png
+preview-*.jpeg
+*.bat
+.playwright-mcp/
+Thumbs.db
+.DS_Store
